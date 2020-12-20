@@ -1,0 +1,26 @@
+[package]
+name = "aws-hello-lambda"
+version = "0.1.0"
+authors = ["Satoru Sukawa <sukawasatoru.github@outlook.jp>"]
+edition = "2018"
+
+[[bin]]
+name = "bootstrap"
+path = "src/main.rs"
+
+[dependencies]
+env_logger = "=0.8.2"
+log = "=0.4.11"
+serde_json = "=1.0.60"
+
+[dependencies.lambda]
+git = "https://github.com/awslabs/aws-lambda-rust-runtime.git"
+rev = "13aa8f0"
+
+[dependencies.serde]
+version = "=1.0.118"
+features = ["derive"]
+
+[dependencies.tokio]
+version = "=0.2.24"
+features = ["rt-threaded"]
