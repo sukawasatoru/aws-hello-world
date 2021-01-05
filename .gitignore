@@ -122,3 +122,4 @@ fabric.properties
 !/.cache/docker-rustup-registry/.gitkeep
 /.cache/docker-sccache/*
 !/.cache/docker-sccache/.gitkeep
+/.idea/aws.xml
