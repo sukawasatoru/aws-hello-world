@@ -41,4 +41,4 @@ RUN --mount=type=cache,dst=/var/cache/apt \
   apt-get update && apt-get install tzdata
 COPY --from=exa $CARGO_HOME/bin/exa $CARGO_HOME/bin/
 COPY --from=sccache $CARGO_HOME/bin/sccache $CARGO_HOME/bin/
-RUN mkdir $CARGO_HOME/{git,registry} && chmod 777 $CARGO_HOME/{git,registry}
+RUN chmod 777 $CARGO_HOME
