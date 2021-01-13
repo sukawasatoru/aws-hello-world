@@ -6,7 +6,7 @@ AWS Hello Lambda
 make build-docker
 
 # build
-docker run --rm --mount type=bind,src=$PWD,dst=/aws-hello-lambda --mount type=volume,dst=/aws-hello-lambda/target -e RUSTC_WRAPPER=sccache -e SCCACHE_DIR=/sccache --mount type=bind,src=$PWD/.cache/docker-sccache,dst=/sccache --mount type=bind,src=$PWD/.cache/docker-rustup-git,dst=/opt/cargo/git --mount type=bind,src=$PWD/.cache/docker-rustup-registry,dst=/opt/cargo/registry -w /aws-hello-lambda toolchain-aws-hello-lambda make dist
+docker run --rm --mount type=bind,src=$PWD,dst=/aws-hello-lambda --mount type=volume,dst=/aws-hello-lambda/target -e RUSTC_WRAPPER=sccache -e SCCACHE_DIR=/sccache --mount type=bind,src=$PWD/.cache/docker-sccache,dst=/sccache --mount type=bind,src=$PWD/.cache/docker-rustup-git,dst=/opt/cargo/git --mount type=bind,src=$PWD/.cache/docker-rustup-registry,dst=/opt/cargo/registry -w /aws-hello-lambda ghcr.io/sukawasatoru/toolchain-aws-hello-lambda:1.0 make dist
 
 MY_ROLE=arn:aws:iam::123456789012:role/RoleName
 MY_REGION=us-east-1

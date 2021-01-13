@@ -1,4 +1,5 @@
 FROM ubuntu:18.04 AS prepare-ubuntu
+LABEL org.opencontainers.image.source="https://github.com/sukawasatoru/aws-hello-lambda"
 SHELL ["/bin/bash", "-c"]
 ARG DEBIAN_FRONTEND=noninteractive
 RUN rm /etc/apt/apt.conf.d/docker-clean && \
@@ -40,3 +41,4 @@ RUN --mount=type=cache,dst=/var/cache/apt \
   apt-get update && apt-get install tzdata
 COPY --from=exa $CARGO_HOME/bin/exa $CARGO_HOME/bin/
 COPY --from=sccache $CARGO_HOME/bin/sccache $CARGO_HOME/bin/
+RUN mkdir $CARGO_HOME/{git,registry} && chmod 777 $CARGO_HOME/{git,registry}

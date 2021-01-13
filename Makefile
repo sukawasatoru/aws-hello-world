@@ -20,4 +20,4 @@ distclean: clean
 
 .PHONY: build-docker
 build-docker:
-	cd docker/toolchain && docker build --build-arg RUST_VERSION=1.49.0 -t toolchain-aws-hello-lambda:latest .
+	cd docker/toolchain && docker build --build-arg RUST_VERSION=1.49.0 -t ghcr.io/sukawasatoru/toolchain-aws-hello-lambda:1.0 .
