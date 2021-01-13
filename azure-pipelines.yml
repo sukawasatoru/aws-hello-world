@@ -1,0 +1,62 @@
+trigger:
+- master
+jobs:
+  - job:
+    displayName: Linux
+    pool:
+      vmImage: 'ubuntu-latest'
+    container: ghcr.io/sukawasatoru/toolchain-aws-hello-lambda:1.0
+    variables:
+      CARGO_HOME: $(Agent.BuildDirectory)/cargo
+      RUSTC_WRAPPER: sccache
+      SCCACHE_DIR: $(Agent.BuildDirectory)/sccache
+    steps:
+      - checkout: self
+        fetchDepth: 1
+      - script: |
+          cp -rp /opt/cargo $(CARGO_HOME)
+          echo "##vso[task.prependpath]$(CARGO_HOME)/bin"
+        displayName: Setup cargo
+      - task: Cache@2
+        inputs:
+          key: 'sccache | "$(Agent.OS)" | rev1'
+          path: $(SCCACHE_DIR)
+        displayName: sccache
+      - task: Cache@2
+        inputs:
+          key: 'rustup-git | "$(Agent.OS)" | rev1'
+          path: $(CARGO_HOME)/git
+        displayName: rustup-git
+      - task: Cache@2
+        inputs:
+          key: 'rustup-registry | "$(Agent.OS)" | rev1'
+          path: $(CARGO_HOME)/registry
+        displayName: rustup-registry
+      - script: cargo -v build
+        displayName: Build
+      - script: cargo clippy
+        displayName: Clippy
+  - job:
+    displayName: macOS-M1
+    pool:
+      name: Default
+      demands:
+        - rust
+        - agent.os -equals Darwin
+    variables:
+      RUSTUP_TOOLCHAIN: 1.49.0-x86_64
+    steps:
+      - script: |
+          cargo -v build 2> >(tee stderr.log >&2)
+          CODE=$?
+          grep -qe ^warning stderr.log && grep -e ^warning stderr.log | xargs -ILINE echo "##vso[task.logissue type=warning]LINE" || true
+          grep -qe ^error stderr.log && grep -e ^error stderr.log | xargs -ILINE echo "##vso[task.logissue type=error]LINE" || true
+          exit $CODE
+        displayName: Build
+      - script: |
+          cargo clippy 2> >(tee stderr.log >&2)
+          CODE=$?
+          grep -qe ^warning stderr.log && grep -e ^warning stderr.log | xargs -ILINE echo "##vso[task.logissue type=warning]LINE" || true
+          grep -qe ^error stderr.log && grep -e ^error stderr.log | xargs -ILINE echo "##vso[task.logissue type=error]LINE" || true
+          exit $CODE
+        displayName: Clippy
