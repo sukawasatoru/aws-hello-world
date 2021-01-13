@@ -7,11 +7,16 @@ jobs:
       vmImage: 'ubuntu-latest'
     container: ghcr.io/sukawasatoru/toolchain-aws-hello-lambda:1.0
     variables:
+      CARGO_HOME: $(Agent.BuildDirectory)/cargo
       RUSTC_WRAPPER: sccache
-      SCCACHE: $(Agent.OS)/sccache
+      SCCACHE_DIR: $(Agent.BuildDirectory)/sccache
     steps:
       - checkout: self
         fetchDepth: 1
+      - script: |
+          cp -rp /opt/cargo $(CARGO_HOME)
+          echo "##vso[task.prependpath]$(CARGO_HOME)/bin"
+        displayName: Setup cargo
       - task: Cache@2
         inputs:
           key: 'sccache | "$(Agent.OS)" | rev1'
@@ -20,12 +25,12 @@ jobs:
       - task: Cache@2
         inputs:
           key: 'rustup-git | "$(Agent.OS)" | rev1'
-          path: /opt/cargo/git
+          path: $(CARGO_HOME)/git
         displayName: rustup-git
       - task: Cache@2
         inputs:
           key: 'rustup-registry | "$(Agent.OS)" | rev1'
-          path: /opt/cargo/registry
+          path: $(CARGO_HOME)/registry
         displayName: rustup-registry
       - script: cargo -v build
         displayName: Build
